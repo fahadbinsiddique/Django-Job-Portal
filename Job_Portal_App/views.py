@@ -1,3 +1,12 @@
 from django.shortcuts import render
-
+from Job_Portal_App.models import *
 # Create your views here.
+
+def home_page(request):
+    return render(request,"home.html")
+
+def register_page(request):
+    return render(request,"register.html")
+
+def login_page(request):
+    return render(request,"login.html")

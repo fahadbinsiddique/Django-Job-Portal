@@ -97,7 +97,7 @@ class JobPostModel(models.Model):
     )
 
     def __str__(self):
-        return f"{self.title} - {self.posted_by.company_name} -  { self.posted_by }"
+        return f"{self.title}  -  { self.posted_by }"
 
 
 class ApplyJobModel(models.Model):
