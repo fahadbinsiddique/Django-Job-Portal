@@ -7,9 +7,14 @@ class UserInfoModel(AbstractUser):
         ("Seeker", "Seeker"),
         ("Recruiter", "Recruiter"),
     ]
-    display_name = models.CharField(max_length=255, null=True, blank=True)
+    display_name = models.CharField(
+        max_length=255,
+        null=True,
+    )
     user_types = models.CharField(
-        choices=USER_TYPES, max_length=25, null=True, blank=True
+        choices=USER_TYPES,
+        max_length=25,
+        null=True,
     )
 
     def __str__(self):
@@ -17,37 +22,56 @@ class UserInfoModel(AbstractUser):
 
 
 class RecruiterProfileModel(models.Model):
-    user = models.OneToOneField(
+    recruiter = models.OneToOneField(
         UserInfoModel,
         on_delete=models.CASCADE,
         related_name="recruiter_profile",
         null=True,
     )
-    company_name = models.CharField(max_length=225, null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
-    logo = models.ImageField(upload_to="recruiter_logos/", null=True, blank=True)
+    company_name = models.CharField(
+        max_length=225,
+        null=True,
+    )
+    email = models.EmailField(
+        null=True,
+    )
+    address = models.TextField(
+        null=True,
+    )
+    phone = models.CharField(
+        max_length=20,
+        null=True,
+    )
+    logo = models.ImageField(
+        upload_to="recruiter_logos/",
+        null=True,
+    )
 
     def __str__(self):
-        return self.company_name if self.company_name else self.user.username
+        return f"{self.company_name} - {self.recruiter.username}"
 
 
 class JobSeekerProfileModel(models.Model):
-    user = models.OneToOneField(
+    seeker = models.OneToOneField(
         UserInfoModel,
         on_delete=models.CASCADE,
         related_name="seeker_profile",
         null=True,
     )
     profile_picture = models.ImageField(
-        upload_to="seeker_photos/", null=True, blank=True
+        upload_to="seeker_photos/",
+        null=True,
     )
-    address = models.TextField(null=True, blank=True)
-    phone = models.CharField(max_length=20, null=True, blank=True)
+    address = models.TextField(
+        null=True,
+    )
+    phone = models.CharField(
+        max_length=20,
+        null=True,
+    )
 
     def __str__(self):
-        return self.user.username
+        return f"{self.seeker.username}"
 
 
 class JobPostModel(models.Model):
@@ -73,7 +97,7 @@ class JobPostModel(models.Model):
     )
 
     def __str__(self):
-        return f"{self.title} - {self.posted_by.company_name if self.posted_by else 'Unknown'}"
+        return f"{self.title} - {self.posted_by.company_name} -  { self.posted_by }"
 
 
 class ApplyJobModel(models.Model):
@@ -93,6 +117,4 @@ class ApplyJobModel(models.Model):
     applied_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return (
-            f"{self.applied_by.user.display_name} applied for {self.applied_job.title}"
-        )
+        return f"{self.applied_by.seeker.display_name} applied for {self.applied_job.title}"
