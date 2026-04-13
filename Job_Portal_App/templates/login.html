@@ -2,8 +2,9 @@
 
 {% block blockname %}
   <h1>Login</h1>
-  <form>
-    
+  <form method="POST">
+    {% csrf_token %}
+    {{ form_data.as_p }}
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 {% endblock %}

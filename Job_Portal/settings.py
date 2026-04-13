@@ -117,3 +117,4 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 AUTH_USER_MODEL = "Job_Portal_App.UserInfoModel"
+LOGIN_URL='login_page'

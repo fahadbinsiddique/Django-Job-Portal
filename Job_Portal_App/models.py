@@ -48,7 +48,7 @@ class RecruiterProfileModel(models.Model):
     )
 
     def __str__(self):
-        return f"{self.company_name} - {self.recruiter.username}"
+        return f"{self.company_name}"
 
 
 class JobSeekerProfileModel(models.Model):
