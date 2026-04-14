@@ -58,7 +58,7 @@ def profile_update(request):
             form_data = RecProfileForm(request.POST, request.FILES, instance=profile)
             if form_data.is_valid():
                 data = form_data.save(commit=False)
-                data.recruiter = profile
+                data.recruiter = user
                 data.save()
                 return redirect("profile_page")
         form_data = RecProfileForm()
@@ -71,7 +71,7 @@ def profile_update(request):
             form_data = SeekerProfileForm(request.POST, request.FILES, instance=profile)
             if form_data.is_valid():
                 data = form_data.save(commit=False)
-                data.seeker = profile
+                data.seeker = user
                 data.save()
                 return redirect("profile_page")
         form_data = SeekerProfileForm()
