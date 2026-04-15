@@ -92,14 +92,30 @@ def profile_update(request):
 
 
 def job_list(request):
-    return render(request, "job-list.html")
+    user=request.user
+    
+
+    if user.user_types == 'Recruiter':
+        form_data = JobPostModel.objects.filter(posted_by=user.recruiter_profile)
+    else:
+        form_data=JobPostModel.objects.all()
+
+    context = {
+        "form_data": form_data,
+        "title": "Job List",
+        
+    }
+    return render(request, "job-list.html",context)
 
 
 def job_post(request):
+    user=request.user
     if request.method == "POST":
         form_data = JobPostForm(request.POST)
         if form_data.is_valid():
-            form_data.save()
+            data=form_data.save(commit=False)
+            data.posted_by = user.recruiter_profile
+            data.save()
             return redirect("job_list")
     form_data = JobPostForm()
     context = {
