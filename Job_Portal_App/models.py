@@ -74,16 +74,20 @@ class JobSeekerProfileModel(models.Model):
         return f"{self.seeker.username}"
 
 
+class CategoryModel(models.Model):
+    name = models.CharField(max_length=50, null=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
 class JobPostModel(models.Model):
-    CATEGORY_CHOICES = [
-        ("Developer", "Developer"),
-        ("Banking", "Banking"),
-        ("HR", "HR"),
-        ("Education", "Education"),
-    ]
+
     title = models.CharField(max_length=255, null=True)
     vacancy = models.PositiveIntegerField(null=True)
-    category = models.CharField(choices=CATEGORY_CHOICES, max_length=20, null=True)
+    category = models.ForeignKey(
+        CategoryModel, on_delete=models.CASCADE, max_length=20, null=True,related_name='job_category'
+    )
     job_description = models.TextField(null=True)
     skills_set = models.TextField(null=True)
     salary = models.DecimalField(max_digits=10, decimal_places=2, null=True)

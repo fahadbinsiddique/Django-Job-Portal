@@ -9,4 +9,6 @@ urlpatterns = [
     path("logout/", logout_page, name="logout_page"),
     path("profile/", profile_page, name="profile_page"),
     path("profile-update/", profile_update, name="profile_update"),
+    path("job-list/", job_list, name="job_list"),
+    path("job-post/", job_post, name="job_post"),
 ]

@@ -8,6 +8,7 @@ admin.site.register(
         RecruiterProfileModel,
         JobSeekerProfileModel,
         JobPostModel,
+        CategoryModel,
         ApplyJobModel,
     ]
 )

@@ -82,3 +82,9 @@ def profile_update(request):
         "btn": "Update Profile",
     }
     return render(request, "master/base-form.html", context)
+
+def job_list(request):
+    return render(request,'job-list.html')
+
+def job_post(request):
+    return render(request, "master/base-form.html")

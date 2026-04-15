@@ -55,3 +55,16 @@ class SeekerProfileForm(forms.ModelForm):
 
         for field in self.fields.values():
             field.widget.attrs.update({"class": "form-control"})
+
+
+class JobPostForm(forms.ModelForm):
+    class Meta:
+        model = JobPostModel
+        fields = '__all__'
+        exclude = [ "posted_by"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs.update({"class": "form-control"})
