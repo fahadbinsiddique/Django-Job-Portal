@@ -2,6 +2,7 @@
 
 
 {% block blockname %}
+<h1>{{heading}}</h1>
 <form action="" method="POST" enctype="multipart/form-data">
 {% csrf_token %}
     {{form_data.as_p}}

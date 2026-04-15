@@ -60,8 +60,10 @@ class SeekerProfileForm(forms.ModelForm):
 class JobPostForm(forms.ModelForm):
     class Meta:
         model = JobPostModel
-        fields = '__all__'
-        exclude = [ "posted_by"]
+        fields = "__all__"
+        exclude = ["posted_by"]
+
+        widgets = {"deadline": forms.DateInput(attrs={"type": "date"})}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

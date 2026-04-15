@@ -18,7 +18,10 @@ def register_page(request):
             form_data.save()
             return redirect("login_page")
     form_data = RegisterForm()
-    context = {"form_data": form_data, "title": "Registration"}
+    context = {
+        "form_data": form_data,
+        "title": "Registration",
+    }
     return render(request, "register.html", context)
 
 
@@ -30,7 +33,10 @@ def login_page(request):
             login(request, user)
             return redirect("home_page")
     form_data = LoginForm()
-    context = {"form_data": form_data, "title": "Login"}
+    context = {
+        "form_data": form_data,
+        "title": "Login",
+    }
     return render(request, "login.html", context)
 
 
@@ -79,12 +85,27 @@ def profile_update(request):
     context = {
         "form_data": form_data,
         "title": "Update Profile",
+        "heading": "Update Profile",
         "btn": "Update Profile",
     }
     return render(request, "master/base-form.html", context)
 
+
 def job_list(request):
-    return render(request,'job-list.html')
+    return render(request, "job-list.html")
+
 
 def job_post(request):
-    return render(request, "master/base-form.html")
+    if request.method == "POST":
+        form_data = JobPostForm(request.POST)
+        if form_data.is_valid():
+            form_data.save()
+            return redirect("job_list")
+    form_data = JobPostForm()
+    context = {
+        "form_data": form_data,
+        "title": "Add Job Post",
+        "heading": "Add Job Post",
+        "btn": "Post Job",
+    }
+    return render(request, "master/base-form.html", context)
