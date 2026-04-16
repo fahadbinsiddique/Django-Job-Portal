@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from Job_Portal_App.models import *
@@ -67,7 +67,7 @@ def profile_update(request):
                 data.recruiter = user
                 data.save()
                 return redirect("profile_page")
-        form_data = RecProfileForm()
+        form_data = RecProfileForm(instance=profile)
     else:
         try:
             profile = user.seeker_profile
@@ -80,7 +80,7 @@ def profile_update(request):
                 data.seeker = user
                 data.save()
                 return redirect("profile_page")
-        form_data = SeekerProfileForm()
+        form_data = SeekerProfileForm(instance=profile)
 
     context = {
         "form_data": form_data,
@@ -96,8 +96,12 @@ def job_list(request):
         user = request.user
 
         if user.user_types == "Recruiter":
-
-            form_data = JobPostModel.objects.filter(posted_by=user.recruiter_profile)
+            try:
+                form_data = JobPostModel.objects.filter(
+                    posted_by=user.recruiter_profile
+                )
+            except RecruiterProfileModel.DoesNotExist:
+                form_data = None
 
         else:
             form_data = JobPostModel.objects.all()
@@ -129,3 +133,27 @@ def job_post(request):
         "btn": "Post Job",
     }
     return render(request, "master/base-form.html", context)
+
+
+def job_edit(request, j_id):
+    job_data = get_object_or_404(JobPostModel, id=j_id)
+    user = request.user
+    if request.method == "POST":
+        form_data = JobPostForm(request.POST, instance=job_data)
+        if form_data.is_valid():
+            data = form_data.save(commit=False)
+            data.posted_by = user.recruiter_profile
+            data.save()
+            return redirect("job_list")
+    form_data = JobPostForm(instance=job_data)
+    context = {
+        "form_data": form_data,
+        "title": "Update Job Post",
+        "heading": "Update Job Post",
+        "btn": "Update Job Post",
+    }
+    return render(request, "master/base-form.html", context)
+
+def job_delete(request,j_id):
+    get_object_or_404(JobPostModel,id=j_id).delete()
+    return redirect("job_list")
