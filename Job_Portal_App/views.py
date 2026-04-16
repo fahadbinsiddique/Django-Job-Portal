@@ -157,3 +157,24 @@ def job_edit(request, j_id):
 def job_delete(request,j_id):
     get_object_or_404(JobPostModel,id=j_id).delete()
     return redirect("job_list")
+
+def job_apply(request,j_id):
+    job_data=get_object_or_404(JobPostModel,id=j_id)
+    user=request.user
+    if user.is_authenticated:
+        if request.method == 'POST':
+            form_data = JobApplyForm(request.POST, request.FILES, )
+            if form_data.is_valid():
+                data= form_data.save(commit=False) 
+                data.applied_by = user.seeker_profile
+                data.applied_job = job_data
+                data.save()
+                return redirect("job_list")
+    form_data = JobApplyForm()
+    context = {
+        "form_data": form_data,
+        "title": "Apply Job Post",
+        "heading": "Apply Job Post",
+        "btn": "Apply Job Post",
+    }
+    return render(request, "master/base-form.html", context)
