@@ -203,3 +203,14 @@ def job_applied(request):
         "title": "Applied Job List",
     }
     return render(request, "job_applied.html", context)
+
+
+def candidate_list(request, j_id):
+    job_data = get_object_or_404(JobPostModel, id=j_id)
+    candidate_data = ApplyJobModel.objects.filter(applied_job=job_data)
+   
+    context = {
+        "candidate_data": candidate_data,
+        "title": "candidate list",
+    }
+    return render(request, "candidate_list.html", context)
