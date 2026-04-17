@@ -14,4 +14,5 @@ urlpatterns = [
     path("job-edit/<str:j_id>/", job_edit, name="job_edit"),
     path("job-delete/<str:j_id>/", job_delete, name="job_delete"),
     path("job-apply/<str:j_id>/", job_apply, name="job_apply"),
+    path("applied-job/", job_applied, name="job_applied"),
 ]

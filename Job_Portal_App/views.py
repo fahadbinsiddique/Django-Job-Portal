@@ -154,18 +154,23 @@ def job_edit(request, j_id):
     }
     return render(request, "master/base-form.html", context)
 
-def job_delete(request,j_id):
-    get_object_or_404(JobPostModel,id=j_id).delete()
+
+def job_delete(request, j_id):
+    get_object_or_404(JobPostModel, id=j_id).delete()
     return redirect("job_list")
 
-def job_apply(request,j_id):
-    job_data=get_object_or_404(JobPostModel,id=j_id)
-    user=request.user
+
+def job_apply(request, j_id):
+    job_data = get_object_or_404(JobPostModel, id=j_id)
+    user = request.user
     if user.is_authenticated:
-        if request.method == 'POST':
-            form_data = JobApplyForm(request.POST, request.FILES, )
+        if request.method == "POST":
+            form_data = JobApplyForm(
+                request.POST,
+                request.FILES,
+            )
             if form_data.is_valid():
-                data= form_data.save(commit=False) 
+                data = form_data.save(commit=False)
                 data.applied_by = user.seeker_profile
                 data.applied_job = job_data
                 data.save()
@@ -178,3 +183,23 @@ def job_apply(request,j_id):
         "btn": "Apply Job Post",
     }
     return render(request, "master/base-form.html", context)
+
+
+def job_applied(request):
+    if request.user.is_authenticated:
+        user = request.user
+        if user.user_types == "Seeker":
+            try:
+                form_data = ApplyJobModel.objects.filter(applied_by=user.seeker_profile)
+            except ApplyJobModel.DoesNotExist:
+                form_data = None
+
+        else:
+            form_data = None
+    else:
+        form_data = None
+    context = {
+        "form_data": form_data,
+        "title": "Applied Job List",
+    }
+    return render(request, "job_applied.html", context)
