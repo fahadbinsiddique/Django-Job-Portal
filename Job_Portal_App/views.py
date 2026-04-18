@@ -8,7 +8,12 @@ from Job_Portal_App.forms import *
 
 
 def home_page(request):
-    return render(request, "home.html")
+    categroy_list= CategoryModel.objects.all()
+    context = {
+        "categroy_list": categroy_list,
+        "title": "categroy_list",
+    }
+    return render(request, "home.html", context)
 
 
 def register_page(request):
@@ -108,13 +113,18 @@ def job_list(request):
     else:
         form_data = JobPostModel.objects.all()
 
+    if request.method == 'GET':
+        cgory_name = request.GET.get("category_id")
+        job_data = JobPostModel.objects.filter(category=cgory_name)
+
     context = {
-        "form_data": form_data,
+        "form_data": job_data,
         "title": "Job List",
     }
     return render(request, "job-list.html", context)
 
 
+@login_required
 def job_post(request):
 
     user = request.user
@@ -135,6 +145,7 @@ def job_post(request):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def job_edit(request, j_id):
     job_data = get_object_or_404(JobPostModel, id=j_id)
     user = request.user
@@ -155,11 +166,13 @@ def job_edit(request, j_id):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def job_delete(request, j_id):
     get_object_or_404(JobPostModel, id=j_id).delete()
     return redirect("job_list")
 
 
+@login_required
 def job_apply(request, j_id):
     job_data = get_object_or_404(JobPostModel, id=j_id)
     user = request.user
@@ -185,6 +198,7 @@ def job_apply(request, j_id):
     return render(request, "master/base-form.html", context)
 
 
+@login_required
 def job_applied(request):
     if request.user.is_authenticated:
         user = request.user
@@ -205,6 +219,7 @@ def job_applied(request):
     return render(request, "job_applied.html", context)
 
 
+@login_required
 def candidate_list(request, j_id):
     job_data = get_object_or_404(JobPostModel, id=j_id)
     candidate_data = ApplyJobModel.objects.filter(applied_job=job_data)
