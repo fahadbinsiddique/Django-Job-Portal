@@ -8,12 +8,11 @@ from Job_Portal_App.forms import *
 
 
 def home_page(request):
-    categroy_list= CategoryModel.objects.all()
-    context = {
-        "categroy_list": categroy_list,
-        "title": "categroy_list",
-    }
-    return render(request, "home.html", context)
+
+    return render(
+        request,
+        "home.html",
+    )
 
 
 def register_page(request):
@@ -97,9 +96,10 @@ def profile_update(request):
 
 
 def job_list(request):
+    categroy_list = CategoryModel.objects.all()
+
     if request.user.is_authenticated:
         user = request.user
-
         if user.user_types == "Recruiter":
             try:
                 form_data = JobPostModel.objects.filter(
@@ -113,12 +113,13 @@ def job_list(request):
     else:
         form_data = JobPostModel.objects.all()
 
-    if request.method == 'GET':
-        cgory_name = request.GET.get("category_id")
-        job_data = JobPostModel.objects.filter(category=cgory_name)
+    cgory_name = request.GET.get("category_id")
+    if cgory_name:
+        form_data = JobPostModel.objects.filter(category=cgory_name)
 
     context = {
-        "form_data": job_data,
+        "categroy_list": categroy_list,
+        "form_data": form_data,
         "title": "Job List",
     }
     return render(request, "job-list.html", context)
@@ -223,7 +224,7 @@ def job_applied(request):
 def candidate_list(request, j_id):
     job_data = get_object_or_404(JobPostModel, id=j_id)
     candidate_data = ApplyJobModel.objects.filter(applied_job=job_data)
-   
+
     context = {
         "candidate_data": candidate_data,
         "title": "candidate list",

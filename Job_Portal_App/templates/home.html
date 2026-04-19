@@ -1,17 +1,6 @@
 {% extends 'master/base.html' %}
 
 {% block blockname %}
-  <h1>HOME</h1>
-
-  <div class="row">
-    {% for list in categroy_list %}
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-body">
-            <a href="{% url 'job_list' %}?category_id={{list.id}}">{{ list.name }}</a>
-          </div>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
+ 
+   
 {% endblock %}
