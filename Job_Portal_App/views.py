@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from Job_Portal_App.models import *
 from Job_Portal_App.forms import *
+from django.db.models import Q
 
 # Create your views here.
 
@@ -117,6 +118,9 @@ def job_list(request):
     if cgory_name:
         form_data = JobPostModel.objects.filter(category=cgory_name)
 
+    Query = request.GET.get("search")
+    if Query:
+        form_data = JobPostModel.objects.filter(Q(title__icontains=Query) | Q(job_description__icontains=Query))
     context = {
         "categroy_list": categroy_list,
         "form_data": form_data,

@@ -6,41 +6,48 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'home_page' %}">Home</a>
+            <a class="nav-link 
+            {% if request.path == '/' %}
+              active
+            {% endif %}
+              " href="{% url 'home_page' %}">Home</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'job_list' %}">All Job</a>
+            <a class="nav-link {% if request.path == '/job-list/' %}
+              active
+            {% endif %}" href="{% url 'job_list' %}">All Job</a>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'register_page' %}">Register</a>
+            <a class="nav-link {% if request.path == '/register/' %}
+              active
+            {% endif %}" href="{% url 'register_page' %}">Register</a>
           </li>
-
 
           {% if request.user.is_authenticated %}
-          <li class="nav-item">
-              <a class="nav-link" href="{% url 'profile_page' %}">My Profile</a>
-          </li>
-          <li class="nav-item">
+            <li class="nav-item">
+              <a class="nav-link {% if request.path == '/profile/' %}
+              active
+            {% endif %}" href="{% url 'profile_page' %}">My Profile</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" href="{% url 'logout_page' %}">Logout</a>
-          </li>
+            </li>
           {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'login_page' %}">Login</a>
             </li>
-            {% endif %}
-          <li class="nav-item">
-            <a class="nav-link" href="#!">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#!">Team</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#!">Contact</a>
-          </li>
+          {% endif %}
         </ul>
       </div>
+
+      {% if request.path == '/job-list/' or request.path == '/' %}
+        <form method="GET" class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" name="search" aria-label="Search" />
+          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+      {% endif %}
     </div>
   </nav>
   <!-- Navbar -->
