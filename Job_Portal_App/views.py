@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from Job_Portal_App.models import *
 from Job_Portal_App.forms import *
+from django.contrib import messages
 from django.db.models import Q
 
 # Create your views here.
@@ -120,7 +121,9 @@ def job_list(request):
 
     Query = request.GET.get("search")
     if Query:
-        form_data = JobPostModel.objects.filter(Q(title__icontains=Query) | Q(job_description__icontains=Query))
+        form_data = JobPostModel.objects.filter(
+            Q(title__icontains=Query) | Q(job_description__icontains=Query)
+        )
     context = {
         "categroy_list": categroy_list,
         "form_data": form_data,
@@ -139,6 +142,7 @@ def job_post(request):
             data = form_data.save(commit=False)
             data.posted_by = user.recruiter_profile
             data.save()
+            messages.success(request, "Job Post successfully!")
             return redirect("job_list")
     form_data = JobPostForm()
     context = {
@@ -148,6 +152,12 @@ def job_post(request):
         "btn": "Post Job",
     }
     return render(request, "master/base-form.html", context)
+
+
+def job_details(request, j_id):
+    job = get_object_or_404(JobPostModel, id=j_id)
+    context = {"job": job}
+    return render(request, "job-details.html", context)
 
 
 @login_required
@@ -160,6 +170,7 @@ def job_edit(request, j_id):
             data = form_data.save(commit=False)
             data.posted_by = user.recruiter_profile
             data.save()
+            messages.success(request, "Profile Update successfully!")
             return redirect("job_list")
     form_data = JobPostForm(instance=job_data)
     context = {
@@ -173,8 +184,15 @@ def job_edit(request, j_id):
 
 @login_required
 def job_delete(request, j_id):
-    get_object_or_404(JobPostModel, id=j_id).delete()
-    return redirect("job_list")
+    job = get_object_or_404(JobPostModel, id=j_id)
+
+    if (
+        request.user.user_types == "Recruiter"
+        and job.posted_by == request.user.recruiter_profile
+    ):
+        job.delete()
+        messages.success(request, "Job deleted successfully!")
+        return redirect("job_list")
 
 
 @login_required

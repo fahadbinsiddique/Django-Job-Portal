@@ -1,0 +1,44 @@
+{% extends 'master/base.html' %}
+
+{% block blockname %}
+  <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-2xl shadow-sm border border-slate-100">
+    <div class="border-b border-slate-100 pb-6 mb-6">
+      <h1 class="text-3xl font-bold text-slate-900">{{ job.title }}</h1>
+      <p class="text-indigo-600 font-semibold mt-2">{{ job.posted_by.company_name }}</p>
+      <div class="flex gap-4 mt-4 text-sm text-slate-500">
+        <span>📅 Deadline: {{ job.deadline }}</span>
+        <span>💼 Vacancy: {{ job.vacancy }}</span>
+        <span>💰 Salary: ${{ job.salary }}</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="md:col-span-2 space-y-6">
+        <div>
+          <h2 class="text-xl font-semibold text-slate-800 mb-2">Job Description</h2>
+          <p class="text-slate-600 leading-relaxed">{{ job.job_description }}</p>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold text-slate-800 mb-2">Requirements</h2>
+          <p class="text-slate-600 leading-relaxed">{{ job.skills_set }}</p>
+        </div>
+      </div>
+
+      <div class="md:col-span-1">
+        {% if user.user_types != 'Recruiter' %}
+          <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+            <h3 class="font-bold text-slate-800 mb-4">Apply Now</h3>
+            {% if user.is_authenticated and user.user_types == 'Seeker' %}
+              <a href="{% url 'job_apply' job.id %}" class="block text-center w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition">Apply for this job</a>
+            {% elif not user.is_authenticated %}
+              <p class="text-sm text-slate-500 mb-4">Please login as a seeker to apply.</p>
+              <a href="{% url 'login_page' %}" class="block text-center w-full bg-slate-800 text-white py-2 rounded-lg">Login</a>
+            {% else %}
+              <p class="text-sm text-amber-600">You are logged in as a Recruiter.</p>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

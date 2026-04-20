@@ -1,97 +1,134 @@
 {% extends 'master/base.html' %}
 
 {% block blockname %}
-<section style="background-color: #eee;">
-  <div class="container py-5">
-    <div class="row">
-      <div class="col">
-        <nav aria-label="breadcrumb" class="bg-body-tertiary rounded-3 p-3 mb-4">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">User Profile</li>
-          </ol>
-        </nav>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
+  <nav class="flex items-center gap-2 text-sm text-slate-400 mb-8">
+    <a href="{% url 'home_page' %}" class="hover:text-slate-600 transition-colors">Home</a>
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    <span class="text-slate-600 font-medium">Profile</span>
+  </nav>
+
+  <div class="grid lg:grid-cols-3 gap-6">
+
+    <div class="lg:col-span-1 space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-100 p-6 text-center">
+        <div class="relative inline-block mb-4">
+          {% if request.user.user_types == "Recruiter" %}
+            {% if request.user.recruiter_profile.logo %}
+              <img src="{{ request.user.recruiter_profile.logo.url }}" alt="Logo" class="w-24 h-24 rounded-full object-cover mx-auto ring-4 ring-slate-50" />
+            {% else %}
+              <div class="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center mx-auto ring-4 ring-slate-50">
+                <span class="text-emerald-600 text-3xl font-semibold">{{ request.user.display_name|default:request.user.username|slice:":1"|upper }}</span>
+              </div>
+            {% endif %}
+          {% else %}
+            {% if request.user.seeker_profile.profile_picture %}
+              <img src="{{ request.user.seeker_profile.profile_picture.url }}" alt="Photo" class="w-24 h-24 rounded-full object-cover mx-auto ring-4 ring-slate-50" />
+            {% else %}
+              <div class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center mx-auto ring-4 ring-slate-50">
+                <span class="text-indigo-600 text-3xl font-semibold">{{ request.user.display_name|default:request.user.username|slice:":1"|upper }}</span>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+
+        <h2 class="text-lg font-semibold text-slate-900">{{ request.user.display_name|default:request.user.username }}</h2>
+        <p class="text-sm text-slate-500 mt-0.5">@{{ request.user.username }}</p>
+        <span class="inline-block mt-2 text-xs px-3 py-1 rounded-full font-medium {% if request.user.user_types == 'Recruiter' %}bg-emerald-100 text-emerald-700{% else %}bg-indigo-100 text-indigo-700{% endif %}">
+          {{ request.user.user_types }}
+        </span>
+
+        <div class="mt-5 space-y-2">
+          <a href="{% url 'profile_update' %}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Edit Profile
+          </a>
+          {% if request.user.user_types == 'Seeker' %}
+            <a href="{% url 'job_applied' %}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-xl transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              My Applications
+            </a>
+          {% else %}
+            <a href="{% url 'job_list' %}" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-xl transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              My Job Posts
+            </a>
+          {% endif %}
+        </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-lg-4">
-        <div class="card mb-4">
-          <div class="card-body text-center">
-            {% if request.user.user_types == "Recruiter" %}
-                {% if request.user.recruiter_profile.logo %}
-                    <img src="{{ request.user.recruiter_profile.logo.url }}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
-                {% else %}
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
-                {% endif %}
-            {% else %}
-                {% if request.user.seeker_profile.profile_picture %}
-                    <img src="{{ request.user.seeker_profile.profile_picture.url }}" alt="avatar" class="rounded-circle img-fluid" style="width: 150px; height: 150px; object-fit: cover;">
-                {% else %}
-                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
-                {% endif %}
-            {% endif %}
+    <div class="lg:col-span-2 space-y-4">
+      <div class="bg-white rounded-2xl border border-slate-100 p-6">
+        <h3 class="text-base font-semibold text-slate-900 mb-5">
+          {% if request.user.user_types == "Recruiter" %}Company Information{% else %}Personal Information{% endif %}
+        </h3>
 
-            <h5 class="my-3">{{ request.user.display_name|default:request.user.username }}</h5>
-            <p class="text-muted mb-1">{{ request.user.user_types }}</p>
-            <div class="d-flex justify-content-center mb-2">
-              <a href="{% url 'profile_update' %}" class="btn btn-primary">Update Profile</a>
+        <dl class="space-y-4">
+          {% if request.user.user_types == "Recruiter" %}
+            <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+              <dt class="text-sm text-slate-500">Company Name</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">
+                {% if request.user.recruiter_profile.company_name %}{{ request.user.recruiter_profile.company_name }}{% else %}<span class="text-slate-400 italic">Not set</span>{% endif %}
+              </dd>
             </div>
-          </div>
-        </div>
+            <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+              <dt class="text-sm text-slate-500">Official Email</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">{{ request.user.recruiter_profile.email|default:request.user.email }}</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+              <dt class="text-sm text-slate-500">Phone</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">
+                {% if request.user.recruiter_profile.phone %}{{ request.user.recruiter_profile.phone }}{% else %}<span class="text-slate-400 italic">Not set</span>{% endif %}
+              </dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4 py-3">
+              <dt class="text-sm text-slate-500">Address</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">
+                {% if request.user.recruiter_profile.address %}{{ request.user.recruiter_profile.address }}{% else %}<span class="text-slate-400 italic">Not set</span>{% endif %}
+              </dd>
+            </div>
+          {% else %}
+            <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+              <dt class="text-sm text-slate-500">Full Name</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">{{ request.user.display_name|default:request.user.username }}</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+              <dt class="text-sm text-slate-500">Email</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">{{ request.user.email }}</dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+              <dt class="text-sm text-slate-500">Phone</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">
+                {% if request.user.seeker_profile.phone %}{{ request.user.seeker_profile.phone }}{% else %}<span class="text-slate-400 italic">Not set</span>{% endif %}
+              </dd>
+            </div>
+            <div class="grid grid-cols-3 gap-4 py-3">
+              <dt class="text-sm text-slate-500">Address</dt>
+              <dd class="col-span-2 text-sm font-medium text-slate-800">
+                {% if request.user.seeker_profile.address %}{{ request.user.seeker_profile.address }}{% else %}<span class="text-slate-400 italic">Not set</span>{% endif %}
+              </dd>
+            </div>
+          {% endif %}
+        </dl>
       </div>
 
-      <div class="col-lg-8">
-        <div class="card mb-4">
-          <div class="card-body">
-            
-            {% if request.user.user_types == "Recruiter" %}
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Company Name</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.recruiter_profile.company_name|default:"Not Set" }}</p></div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Official Email</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.recruiter_profile.email|default:request.user.email }}</p></div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Phone</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.recruiter_profile.phone|default:"N/A" }}</p></div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Address</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.recruiter_profile.address|default:"N/A" }}</p></div>
-                </div>
-
-            {% else %}
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Full Name</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.display_name|default:request.user.username }}</p></div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Email</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.email }}</p></div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Phone</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.seeker_profile.phone|default:"N/A" }}</p></div>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="col-sm-3"><p class="mb-0">Address</p></div>
-                  <div class="col-sm-9"><p class="text-muted mb-0">{{ request.user.seeker_profile.address|default:"N/A" }}</p></div>
-                </div>
-            {% endif %}
-
+      <div class="bg-white rounded-2xl border border-slate-100 p-6">
+        <h3 class="text-base font-semibold text-slate-900 mb-5">Account Details</h3>
+        <dl class="space-y-4">
+          <div class="grid grid-cols-3 gap-4 py-3 border-b border-slate-50">
+            <dt class="text-sm text-slate-500">Username</dt>
+            <dd class="col-span-2 text-sm font-medium text-slate-800">{{ request.user.username }}</dd>
           </div>
-        </div>
+          <div class="grid grid-cols-3 gap-4 py-3">
+            <dt class="text-sm text-slate-500">Member Since</dt>
+            <dd class="col-span-2 text-sm font-medium text-slate-800">{{ request.user.date_joined|date:"d M, Y" }}</dd>
+          </div>
+        </dl>
       </div>
     </div>
+
   </div>
-</section>
-{% endblock blockname %}
+</div>
+{% endblock %}
