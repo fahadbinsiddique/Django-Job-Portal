@@ -5,6 +5,9 @@ from Job_Portal_App.models import *
 from Job_Portal_App.forms import *
 from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+
 
 # Create your views here.
 
@@ -252,3 +255,20 @@ def candidate_list(request, j_id):
         "title": "candidate list",
     }
     return render(request, "candidate_list.html", context)
+
+def change_password(request):
+    if request.method == 'POST':
+        form_data = PasswordChangeForm(request.user,request.POST)
+        if form_data.is_valid():
+            user= form_data.save()
+            update_session_auth_hash(request,user)
+            return redirect("profile_page")
+
+    form_data = PasswordChangeForm(request.user)
+    context = {
+        "form_data": form_data,
+        "title": "PasswordChangeForm",
+        "heading": "Password Change Form",
+        "btn": "Save",
+    }
+    return render(request, "master/base-form.html", context)
